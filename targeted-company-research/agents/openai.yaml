@@ -1,0 +1,6 @@
+interface:
+  display_name: "Targeted Company Research"
+  short_description: "Source-backed company deep-dive reports"
+  default_prompt: "Use $targeted-company-research to create a source-backed company research report for a named target company."
+policy:
+  allow_implicit_invocation: true
