@@ -13,7 +13,7 @@ Replace variables before assigning work:
 | `{LANGUAGE}` | Output language |
 | `{PURPOSE}` | ABM, competitor, partner, supplier, diligence, or general |
 
-## Shared Worker Rules
+## Shared Task Rules
 
 - Work only on the assigned task.
 - Use `web_search` for breadth and `web_fetch` for source extraction.
@@ -23,6 +23,35 @@ Replace variables before assigning work:
 - Mark estimates and missing facts explicitly.
 - Do not read other task folders until final merge.
 - Do not collect private personal contact information or guess private emails.
+- After finishing, update `projects/{PROJECT}/task_status.md` with status, source count, fetch/browser count, major findings and data gaps.
+
+## Project Setup Template
+
+Create this before executing tasks:
+
+```markdown
+# {COMPANY} Research Task Plan
+
+| Field | Value |
+|---|---|
+| Company | {COMPANY} |
+| Website | {WEBSITE} |
+| Industry | {INDUSTRY} |
+| Geography | {GEOGRAPHY} |
+| Purpose | {PURPOSE} |
+| Language | {LANGUAGE} |
+| Run mode | sequential by default; parallel only if supported |
+
+## Tasks
+
+| Task | Folder | Status | Source target |
+|---|---|---|---:|
+| Task 1 | task1_company | pending | 12+ |
+| Task 2 | task2_product | pending | 12+ |
+| Task 3 | task3_industry | pending | 10+ |
+| Task 4 | task4_channel | pending | 12+ |
+| Task 5 | task5_marketing | pending | 12+ |
+```
 
 ## Task 1: Company Fundamentals And History
 

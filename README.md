@@ -27,10 +27,16 @@
 ```text
 projects/{project_slug}/
 ├── task_plan.md
+├── task_status.md
+├── task1_company/task_instructions.md
 ├── task1_company/task1_company.md
+├── task2_product/task_instructions.md
 ├── task2_product/task2_product.md
+├── task3_industry/task_instructions.md
 ├── task3_industry/task3_industry.md
+├── task4_channel/task_instructions.md
 ├── task4_channel/task4_channel.md
+├── task5_marketing/task_instructions.md
 ├── task5_marketing/task5_marketing.md
 ├── sources/source_index.md
 ├── evidence/
@@ -45,6 +51,7 @@ projects/{project_slug}/
 - 客户、渠道、分销商、供应链、采购信号。
 - 营销内容、展会活动、公开业务决策人、ABM 切入建议。
 - 信息缺口和来源索引。
+- 附录保留 5 个子任务完整报告，主报告保留汇总判断。
 
 ## 检索策略
 
@@ -99,6 +106,8 @@ targeted-company-research/SKILL.md
 - 可选多 worker/子任务并行。
 
 没有多 worker 能力也可以使用：按 5 个任务顺序执行，再合并成 `FINAL_REPORT.md`。
+
+Codex 默认建议顺序执行：Task 1 到 Task 5 逐个完成，每完成一个任务更新 `task_status.md`。多 worker 只作为加速选项，不是必需条件。
 
 ## 数据边界
 

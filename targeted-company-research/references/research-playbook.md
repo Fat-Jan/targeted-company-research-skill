@@ -47,7 +47,36 @@ Confirm the target company identity before deep research:
 
 Stop and clarify with the user when two companies plausibly match the same target name.
 
-### Phase 2: Breadth Search
+### Phase 2: Project Setup
+
+Create the project skeleton before research:
+
+```text
+projects/{project_slug}/
+├── task_plan.md
+├── task_status.md
+├── task1_company/task_instructions.md
+├── task2_product/task_instructions.md
+├── task3_industry/task_instructions.md
+├── task4_channel/task_instructions.md
+├── task5_marketing/task_instructions.md
+├── sources/source_index.md
+└── evidence/
+```
+
+`task_plan.md` should record target company, official website, industry, geography, language, purpose, depth, run mode, task owners if any, and source targets.
+
+`task_status.md` should be updated after each task:
+
+```markdown
+| Task | Status | Sources | Fetch/browser | Major findings | Data gaps |
+|---|---|---:|---:|---|---|
+| Task 1 | done | 14 | 9 | ... | ... |
+```
+
+Use `running`, `done`, `blocked`, or `skipped` as status values.
+
+### Phase 3: Breadth Search
 
 Collect 20-40 candidate sources across all five task areas. Use search results to discover:
 
@@ -65,7 +94,7 @@ Save candidate source metadata in `sources/source_index.md`:
 | S01 | T1 | Task 1 | Company website | https://... | YYYY-MM-DD | About page |
 ```
 
-### Phase 3: Deep Fetch
+### Phase 4: Deep Fetch
 
 Use `web_fetch` or equivalent extraction for stable pages:
 
@@ -77,7 +106,7 @@ Use `web_fetch` or equivalent extraction for stable pages:
 
 For each source, extract only facts relevant to the report. Avoid long pasted excerpts. Preserve exact numbers, dates, titles, product names, standards, and source names.
 
-### Phase 4: Browser/CDP Fetch
+### Phase 5: Browser/CDP Fetch
 
 Use a CDP-connected browser when static extraction fails or when a page is JavaScript-heavy.
 
@@ -122,7 +151,7 @@ Implementation pattern:
 
 Avoid foreground focus stealing when the environment provides a background browser or in-app browser. If only the user's visible Chrome is available, keep navigation minimal and preserve the current tab context where possible.
 
-### Phase 5: Expansion Loop
+### Phase 6: Expansion Loop
 
 Run a second keyword pass using discovered names:
 
@@ -134,6 +163,19 @@ Run a second keyword pass using discovered names:
 - Industry-specific databases.
 
 The second pass often finds better evidence than the original company-name searches.
+
+### Phase 7: Sequential Merge
+
+Codex should default to sequential merge:
+
+1. Read Task 1-5 outputs.
+2. Extract the strongest sourced findings into an executive synthesis.
+3. Preserve complete task outputs in `Appendix: Full Task Reports`.
+4. Remove duplicate source sections from the main task text only if the source index is complete.
+5. Deduplicate `sources/source_index.md` by canonical URL, but preserve different notes when one URL supports multiple facts.
+6. Write `FINAL_REPORT.md`.
+
+If any task is blocked, keep the task heading in the final report and write `缺少数据：...` rather than silently dropping it.
 
 ## Source Tiers
 
@@ -261,6 +303,34 @@ Missing evidence must be explicit:
 
 ```text
 缺少数据：未找到公开可验证的 2025 年营收；第三方估算仅能支持区间判断。
+```
+
+Final report structure:
+
+```markdown
+# {Company} Targeted Company Research Report
+
+## Executive Takeaways
+
+## Part 1: Company Fundamentals And Products
+### 1. Company Fundamentals
+### 2. Products And Technology
+
+## Part 2: Market, Channel And ABM
+### 3. Industry And Competitors
+### 4. Customers, Channels And Supply Chain
+### 5. Marketing, Events And ABM Entry Points
+
+## Data Gaps
+
+## Appendix: Full Task Reports
+### Task 1 Full Report
+### Task 2 Full Report
+### Task 3 Full Report
+### Task 4 Full Report
+### Task 5 Full Report
+
+## Sources
 ```
 
 ## Quality Checklist

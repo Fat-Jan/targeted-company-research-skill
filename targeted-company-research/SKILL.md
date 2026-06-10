@@ -37,11 +37,22 @@ Default output is local-first:
 ```text
 projects/{project_slug}/
 ├── task_plan.md
-├── task1_company/task1_company.md
-├── task2_product/task2_product.md
-├── task3_industry/task3_industry.md
-├── task4_channel/task4_channel.md
-├── task5_marketing/task5_marketing.md
+├── task_status.md
+├── task1_company/
+│   ├── task_instructions.md
+│   └── task1_company.md
+├── task2_product/
+│   ├── task_instructions.md
+│   └── task2_product.md
+├── task3_industry/
+│   ├── task_instructions.md
+│   └── task3_industry.md
+├── task4_channel/
+│   ├── task_instructions.md
+│   └── task4_channel.md
+├── task5_marketing/
+│   ├── task_instructions.md
+│   └── task5_marketing.md
 ├── sources/source_index.md
 ├── evidence/
 └── FINAL_REPORT.md
@@ -84,7 +95,7 @@ Use both breadth and depth:
 
 Read `references/research-playbook.md` before running deep or standard research. It defines keyword expansion, Boolean query patterns, CDP/browser rules, evidence logging, and quality gates.
 
-Read `references/task-instructions-template.md` when creating worker instructions or when the user asks for a full multi-part report.
+Read `references/task-instructions-template.md` when creating task instructions or when the user asks for a full multi-part report.
 
 ## Keyword Expansion
 
@@ -127,7 +138,7 @@ Physical browser/CDP access pattern:
 
 ## Execution Model
 
-For standard/deep reports, split work into five tasks:
+For standard/deep reports, split work into five tasks and write one instruction file per task before research starts:
 
 | Task | Focus | Minimum search | Minimum fetch/browser | Target sources |
 |---|---:|---:|---:|---:|
@@ -137,7 +148,23 @@ For standard/deep reports, split work into five tasks:
 | Task 4 | Customers, channels, supply chain | 12 | 8 | 12 |
 | Task 5 | Marketing, events, public people, ABM | 14 | 8 | 12 |
 
-Parallel workers are optional. If the environment supports subagents or OpenClaw sessions, assign one task per worker and forbid workers from reading other task output until final merge. If parallel workers are unavailable, run the tasks sequentially.
+Sequential execution is the default for Codex:
+
+1. Create `task_plan.md`, `task_status.md`, `sources/source_index.md`, `evidence/`, and five task folders.
+2. Generate `task_instructions.md` for all five tasks from `references/task-instructions-template.md`.
+3. Execute Task 1 to Task 5 in order.
+4. After each task, update `task_status.md` with status, source count, fetch/browser count, major findings, and data gaps.
+5. Merge only after all available tasks have been completed or explicitly marked blocked.
+
+Parallel workers are an accelerator, not a dependency. If the environment supports subagents or OpenClaw sessions, assign one task per worker and forbid workers from reading other task output until final merge. If parallel workers are unavailable, run the tasks sequentially.
+
+Depth controls:
+
+| Depth | Use when | Tasks | Target sources |
+|---|---|---:|---:|
+| light | Fast account brief | 5 tasks, compressed | 20-30 total |
+| standard | Normal company research | 5 tasks | 55-70 total |
+| deep | Long-form report or diligence | 5 tasks + second expansion loop | 70+ total |
 
 The skill is platform-neutral:
 
@@ -159,11 +186,15 @@ The skill is platform-neutral:
 ## Executive Takeaways
 5-8 specific findings with source marks.
 
+## Part 1: Company Fundamentals And Products
+
 ## 1. Company Fundamentals
 Ownership, history, leadership, footprint, scale, compliance.
 
 ## 2. Products And Technology
 Product lines, technical specs, certifications, pricing and reviews.
+
+## Part 2: Market, Channel And ABM
 
 ## 3. Industry And Competitors
 Market context, competitor matrix, positioning, strategic risks.
@@ -177,9 +208,14 @@ Messaging, public campaigns, events, public decision makers, recommended angles.
 ## Data Gaps
 Missing or low-confidence items.
 
+## Appendix: Full Task Reports
+Preserve the full text of Task 1-5 after the executive synthesis.
+
 ## Sources
 Deduplicated source index.
 ```
+
+Keep two reading layers: the main body is a synthesized executive report, and the appendix preserves complete task outputs for audit depth.
 
 Keep all original numbers, years, names, platforms, source names, product names, and representative quotes that support the conclusion.
 
