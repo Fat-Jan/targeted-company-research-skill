@@ -66,7 +66,8 @@ Skill 要求智能体同时使用三类能力：
 ```bash
 python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
   --repo AAAAAAlone/targeted-company-research-skill \
-  --path targeted-company-research
+  --path targeted-company-research \
+  --method git
 ```
 
 安装后重启 Codex。
