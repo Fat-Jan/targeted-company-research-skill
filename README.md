@@ -44,14 +44,18 @@ This fork rebuilds the skill from a *methodology document* into an *executable, 
 ## File Structure
 
 ```text
+ROADMAP.md                                # Mode B (market research) plan — shared layers, no rewrite
 targeted-company-research/
 ├── SKILL.md                              # flow + report structure + quality gates (read first)
 ├── agents/openai.yaml                    # Codex interface config
-└── references/
-    ├── platform-capabilities.md          # how to run capabilities on your platform + sub-agent orchestration
-    ├── search-strategy.md                # how to search without stalling (stop conditions, type-adaptive, native-language)
-    ├── analysis-frameworks.md            # how to analyze (consulting frameworks, mode-agnostic)
-    └── task-packs.md                     # what to search per task (seeds + output checklist)
+├── references/
+│   ├── platform-capabilities.md          # how to run capabilities on your platform + sub-agent orchestration
+│   ├── search-strategy.md                # how to search without stalling (stop conditions, type-adaptive, native-language)
+│   ├── analysis-frameworks.md            # how to analyze (consulting frameworks, mode-agnostic)
+│   └── task-packs.md                     # what to search per task (seeds + output checklist)
+└── scripts/
+    ├── generate_pdf.py                   # optional Markdown→PDF export (data-gap banner, CJK layout)
+    └── requirements.txt                  # reportlab
 ```
 
 ## Install & Use

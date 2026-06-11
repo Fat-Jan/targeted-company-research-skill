@@ -20,10 +20,10 @@ The analysis layer is already **mode-agnostic**. These pieces are shared, not re
 
 | Shared asset | Mode A use | Mode B use |
 |---|---|---|
-| `analysis-frameworks.md` | Five Forces, SWOT, positioning on one company | TAM/SAM/SOM, market attractiveness, entry strategy on a market |
-| `platform-capabilities.md` | same SEARCH/FETCH/SUBAGENT/WRITE map | unchanged |
-| `search-strategy.md` | feedback loop + stop conditions | unchanged |
-| `scripts/generate_pdf.py` | company report → PDF | market report → PDF |
+| `targeted-company-research/references/analysis-frameworks.md` | Five Forces, SWOT, positioning on one company | TAM/SAM/SOM, market attractiveness, entry strategy on a market |
+| `targeted-company-research/references/platform-capabilities.md` | same SEARCH/FETCH/SUBAGENT/WRITE map | unchanged |
+| `targeted-company-research/references/search-strategy.md` | feedback loop + stop conditions | unchanged |
+| `targeted-company-research/scripts/generate_pdf.py` | company report → PDF | market report → PDF |
 
 Only two things are genuinely new for Mode B:
 
