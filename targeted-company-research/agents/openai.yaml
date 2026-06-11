@@ -1,10 +1,16 @@
 interface:
   display_name: "Targeted Company Research"
-  short_description: "Source-backed, consulting-grade company deep-dive reports"
-  default_prompt: "Use $targeted-company-research to create a source-backed, consulting-grade research report for a named target company. Lock scope first, run five evidence chains, then synthesize with analysis frameworks."
+  short_description: "Source-backed, consulting-grade company or market research reports"
+  default_prompt: "Use $targeted-company-research to create a source-backed, consulting-grade research report. First run the Mode Router: use Mode A for a named company and Mode B for a market or industry. Lock scope, execute the task pack for that mode, synthesize with the shared analysis frameworks, preserve source marks and explicit data gaps, and avoid stock-analyst framing unless the user explicitly asks for equity research."
 policy:
   allow_implicit_invocation: true
+# OpenAI/Codex-specific adapter only:
+#   - The portable skill contract lives in SKILL.md and references/*.
+#   - This file exists because Codex/OpenAI skills support an extra interface manifest layer.
 # Execution notes (read SKILL.md for the full flow):
-#   - Codex maps capabilities to native web_search / web_fetch / browser tool / parallel workers / file write.
-#   - Run five tasks via parallel workers when available (one task per worker), else sequentially.
-#   - See references/platform-capabilities.md for the capability map and sub-agent orchestration.
+#   - Run the Mode Router first: Mode A = named company, Mode B = market/industry.
+#   - Codex maps capabilities to native web search / fetch / browser / parallel workers / file write.
+#   - Execute one worker per task when parallel workers are available; otherwise run sequentially.
+#   - Mode A uses 5 company evidence chains; Mode B uses 6 market tasks (M1-M6).
+#   - This skill is for business research, not stock-analyst reports with ratings or price targets.
+#   - See references/platform-capabilities.md for the capability map and worker orchestration.
