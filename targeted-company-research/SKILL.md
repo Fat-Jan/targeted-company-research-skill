@@ -6,233 +6,212 @@ description: >-
   asks for company research, enterprise deep dive, customer research, competitor
   research, ABM preparation, company profile, targeted research, or a multi-source
   report about a named organization.
-metadata:
-  short-description: Source-backed company deep-dive reports
+license: MIT
 ---
 
 # Targeted Company Research
+
+Turn a named company into a source-backed business map: who it is, what it sells,
+where it competes, who it sells to, how it goes to market, and where the entry
+points are. Output is consulting-grade — every material claim carries a source
+mark, and findings are pushed from fact → insight → action.
+
+> 把一个目标公司做成有来源、可验证的业务地图，达到咨询报告质量。
+
+## How To Read This Skill
+
+One file, one job. Don't duplicate across files.
+
+| File | Answers | Read when |
+|---|---|---|
+| `SKILL.md` (this) | What's the flow? What does the report look like? | Always, first |
+| `references/platform-capabilities.md` | How do I run search / fetch / sub-agents on THIS platform? | Before executing |
+| `references/search-strategy.md` | How do I search without stalling? | Before collecting sources |
+| `references/analysis-frameworks.md` | How do I analyze, not just collect? | Before writing each task |
+| `references/task-packs.md` | What exactly do I search for per task? | When running a task |
 
 ## Trigger
 
 Use this skill when the user asks for:
 
 - Company research, company profile, enterprise deep dive, customer research, competitor research.
-- ABM sales preparation, partner research, supplier research, market-entry account research.
+- ABM sales prep, partner research, supplier research, market-entry account research.
 - A report on a specific named company, subsidiary, brand, competitor, buyer, distributor, or investment target.
 
-Do not use this skill for broad industry reports without a named target company. Use a market or industry research workflow instead.
+Don't use this for broad industry/market reports without a named target company.
+*(A market/industry research mode is on the roadmap — see Roadmap. For now, route market-only requests to a market research workflow.)*
 
-## Research Outcome
+## Phase 0: Scope Lock (Gate)
 
-Create a source-backed Markdown report that explains the target company from five angles:
+**Minimal intake**: only two inputs are required to start — the **company name** and the
+**purpose**. Everything else is inferred and marked with confidence per the defaults table
+below; never block the run waiting for fields the user didn't give. *(Minimal two-question
+intake adopted from dazhiruoyu — lower the barrier to start.)*
 
-1. Company fundamentals, history, ownership, leadership, financial scale, compliance.
-2. Product lines, technology, certifications, pricing signals, reviews.
-3. Industry structure, market size, competitors, strategic position.
-4. Customers, channels, distributors, supply chain, procurement signals.
-5. Marketing, events, public decision makers, ABM entry points.
+Before any deep research, confirm and present a one-line scope summary, then proceed:
 
-Default output is local-first:
+- Official domain and legal entity (avoid same-name collisions).
+- HQ city/country and **home language** of the target market (drives non-English search).
+- Parent/subsidiary relationships.
+- **Target type**: manufacturer / distributor / SaaS / brand — this sets search emphasis (see `search-strategy.md`).
+- Purpose (ABM / competitor / partner / supplier / diligence) and output language.
+- Depth: light / standard / deep.
+
+Stop and ask only when two companies plausibly match the same name. Otherwise infer conservatively and mark uncertain fields.
+
+| Field | Default if missing |
+|---|---|
+| Website | find from public search |
+| Industry | infer, mark confidence |
+| Geography | global + HQ country |
+| Purpose | general business research |
+| Language | user's language |
+| Depth | standard |
+
+## Phase 1: Project Setup
+
+Create the skeleton before research (templates in `task-packs.md`):
 
 ```text
 projects/{project_slug}/
-├── task_plan.md
-├── task_status.md
-├── task1_company/
-│   ├── task_instructions.md
-│   └── task1_company.md
+├── task_plan.md          # scope, target type, depth, run mode, source targets
+├── task_status.md        # updated after each task
+├── task1_company/  (task_instructions.md + task1_company.md)
 ├── task2_product/
-│   ├── task_instructions.md
-│   └── task2_product.md
 ├── task3_industry/
-│   ├── task_instructions.md
-│   └── task3_industry.md
 ├── task4_channel/
-│   ├── task_instructions.md
-│   └── task4_channel.md
 ├── task5_marketing/
-│   ├── task_instructions.md
-│   └── task5_marketing.md
 ├── sources/source_index.md
-├── evidence/
+├── evidence/             # browser_notes.md and saved evidence
 └── FINAL_REPORT.md
 ```
 
-Optional outputs: HTML/PDF export, slide summary, or CRM/ABM brief only when the user asks.
+Generate one `task_instructions.md` per task from `task-packs.md`.
 
-## Required Inputs
+## Phase 2: Execute (5 Evidence Chains)
 
-If missing, infer conservatively from public sources and mark uncertain fields:
+Five tasks, each an evidence chain + an analysis lens:
 
-| Field | Meaning | Default |
-|---|---|---|
-| Target company | Legal name, brand name, or common name | Required |
-| Website | Official site | Find from public search |
-| Industry | Main business category | Infer and mark confidence |
-| Geography | HQ and priority market | Global + HQ country |
-| Research purpose | ABM, competitor, partner, supplier, diligence | General business research |
-| Language | Output language | User language |
-| Depth | light, standard, deep | standard |
+| Task | Focus | Analysis lens | Min search | Min fetch | Source target |
+|---|---|---|---:|---:|---:|
+| 1 | Company fundamentals & history | Company anatomy | 12 | 8 | 12 |
+| 2 | Products, technology, certs | Value-chain position | 12 | 8 | 12 |
+| 3 | Industry & competitors | Five Forces + positioning | 12 | 8 | 10 |
+| 4 | Customers, channels, supply chain | Channel map + procurement | 12 | 8 | 12 |
+| 5 | Marketing, events, people, ABM | Decision-maker map + So-What | 14 | 8 | 12 |
 
-## Source Ladder
+**Run mode** — pick by platform capability (`platform-capabilities.md`):
 
-Collect evidence in this order:
+- **Sub-agents available** (Claude Task / Codex workers / OpenClaw sessions): assign one task per sub-agent. This is the default for capable platforms — it's the execution layer earlier packaging lost. Forbid workers from reading other task folders until merge.
+- **No sub-agents**: run Task 1→5 sequentially in the main loop. Same output, slower.
 
-1. T0 regulatory, filings, court, customs, certification, official registry, patent and standards databases.
-2. T1 company-owned pages, official news, investor pages, product docs, catalog PDFs, public social accounts.
-3. T2 credible third-party databases, industry associations, trade shows, distributors, marketplaces, media.
-4. T3 estimates and lead databases such as LinkedIn, ZoomInfo-like pages, import/export mirrors, review sites.
+Either way, dependencies flow forward *(adopted from mckinsey-research batch ordering)*: later tasks may reference earlier confirmed findings; the final synthesis depends on all five.
 
-Every material claim needs a source mark such as `[S12]`. Unsourced numbers must be marked `待核实` or `estimate`.
-
-## Search And Fetch Strategy
-
-Use both breadth and depth:
-
-- `web_search` discovers source candidates, aliases, subsidiaries, competitors, people, channels, documents, and regional results.
-- `web_fetch` extracts stable pages, PDFs, product docs, articles, registry pages, and official pages found by search.
-- CDP/browser access handles JavaScript-rendered pages, logged-in user-owned sessions, marketplace pages, LinkedIn-like public profile surfaces, and pages where static fetch fails.
-
-Read `references/research-playbook.md` before running deep or standard research. It defines keyword expansion, Boolean query patterns, CDP/browser rules, evidence logging, and quality gates.
-
-Read `references/task-instructions-template.md` when creating task instructions or when the user asks for a full multi-part report.
-
-## Keyword Expansion
-
-Before collecting sources, build a keyword matrix:
-
-- Entity aliases: legal name, brand name, abbreviations, former names, subsidiaries, acquired brands, local-language names.
-- Domain terms: product categories, use cases, certifications, materials, standards, buyer industries.
-- Evidence terms: revenue, employees, funding, acquisition, lawsuit, certification, patent, datasheet, catalog, distributor, reseller, trade show, case study.
-- Geography terms: HQ city, manufacturing sites, target markets, language variants.
-- Source operators: `site:`, `filetype:pdf`, exact quotes, OR groups, date terms, registry names, association names.
-
-Run at least one expansion pass after the first 8-12 useful sources. Newly discovered product names, executives, subsidiaries, customers, and competitors become new query seeds.
-
-## Browser And CDP Rules
-
-Use the user's real browser or a CDP-connected browser only for public pages or user-authorized sessions.
-
-Good CDP/browser targets:
-
-- Official sites that render content in JavaScript.
-- Product catalogs, store pages, review pages, and search pages that fail under static fetch.
-- Public LinkedIn/company/team pages when the user has an authorized browser session.
-- Trade show exhibitor directories, distributor locators, certification search pages, patent search pages.
-
-Rules:
-
-- Do not bypass paywalls, access controls, captchas, or private systems.
-- Do not collect private personal contact data. Public business names, roles, official profile URLs, official contact forms, and published company emails are acceptable.
-- Preserve evidence: page URL, access date, page title, key extracted text, and whether the source came from `web_search`, `web_fetch`, or browser/CDP.
-- If browser extraction is visual, save a short note in `evidence/browser_notes.md` with the URL and observed facts.
-
-Physical browser/CDP access pattern:
-
-1. Open the target URL in the available browser tool or a user-authorized Chrome/CDP session.
-2. Wait for the page to finish rendering or for the relevant result list/card/table to appear.
-3. Extract title, URL, visible text, table rows, public profile fields, and product cards; prefer DOM text over screenshots.
-4. Use screenshots only for evidence that cannot be reliably extracted as text.
-5. Save the extracted facts to `evidence/browser_notes.md` and cite the URL in `sources/source_index.md`.
-6. Return to `web_search` with newly discovered names, product models, certificates, distributors, or people.
-
-## Execution Model
-
-For standard/deep reports, split work into five tasks and write one instruction file per task before research starts:
-
-| Task | Focus | Minimum search | Minimum fetch/browser | Target sources |
-|---|---:|---:|---:|---:|
-| Task 1 | Company fundamentals and history | 12 | 8 | 12 |
-| Task 2 | Products, technology, certifications | 12 | 8 | 12 |
-| Task 3 | Industry and competitors | 12 | 8 | 10 |
-| Task 4 | Customers, channels, supply chain | 12 | 8 | 12 |
-| Task 5 | Marketing, events, public people, ABM | 14 | 8 | 12 |
-
-Sequential execution is the default for Codex:
-
-1. Create `task_plan.md`, `task_status.md`, `sources/source_index.md`, `evidence/`, and five task folders.
-2. Generate `task_instructions.md` for all five tasks from `references/task-instructions-template.md`.
-3. Execute Task 1 to Task 5 in order.
-4. After each task, update `task_status.md` with status, source count, fetch/browser count, major findings, and data gaps.
-5. Merge only after all available tasks have been completed or explicitly marked blocked.
-
-Parallel workers are an accelerator, not a dependency. If the environment supports subagents or OpenClaw sessions, assign one task per worker and forbid workers from reading other task output until final merge. If parallel workers are unavailable, run the tasks sequentially.
+For each task:
+1. Write 3-5 **hypotheses** to confirm/falsify (hypothesis-driven, not collect-everything).
+2. Run the search loop with stop conditions (`search-strategy.md`) — this is what prevents runaway, stalling research.
+3. Apply the task's analysis framework (`analysis-frameworks.md`).
+4. Update `task_status.md`: status, source count, fetch/browser count, major findings, gaps.
 
 Depth controls:
 
-| Depth | Use when | Tasks | Target sources |
-|---|---|---:|---:|
-| light | Fast account brief | 5 tasks, compressed | 20-30 total |
-| standard | Normal company research | 5 tasks | 55-70 total |
-| deep | Long-form report or diligence | 5 tasks + second expansion loop | 70+ total |
+| Depth | Tasks | Total source target |
+|---|---|---:|
+| light | 5 compressed | 20-30 |
+| standard | 5 full | 55-70 |
+| deep | 5 + second expansion loop | 70+ |
 
-The skill is platform-neutral:
+## Phase 3: Synthesize & Deliver
 
-- Codex: use available web search/fetch/browser tools and local files.
-- OpenClaw or other agents: use equivalent search, fetch, CDP, browser, and file-writing capabilities.
-- No fixed model, Feishu, Slack, Google Drive, or private upload service is required.
+1. Read all five task outputs.
+2. Run an **executive synthesis** *(adopted from mckinsey-research master prompt)*:
+   - Lead with conclusions, not "we researched from multiple angles."
+   - For ABM/diligence purposes, present strategic angles + recommended next actions.
+3. Run the **MECE + So-What quality gate** (`analysis-frameworks.md`) on findings.
+4. Write `FINAL_REPORT.md` (structure below). Keep two layers: synthesized body + full task appendix.
+5. Optional: export to PDF via `scripts/generate_pdf.py` *(thanks to dazhiruoyu)* when the user wants a polished deliverable.
 
-## Report Structure
-
-`FINAL_REPORT.md` should contain:
+## Report Structure (authoritative — defined once, here)
 
 ```markdown
 # {Company} Targeted Company Research Report
 
-> Research date: {date}
-> Purpose: {purpose}
-> Confidence: high / medium / low
+> Research date: {date} · Purpose: {purpose} · Confidence: high/medium/low
 
 ## Executive Takeaways
-5-8 specific findings with source marks.
+5-8 specific, sourced findings. Each: object → judgment → evidence.
 
-## Part 1: Company Fundamentals And Products
+## Part 1: Company Fundamentals & Products
+### 1. Company Fundamentals      (ownership, history, leadership, scale, compliance)
+### 2. Products & Technology      (lines, specs, certs, pricing, reviews)
 
-## 1. Company Fundamentals
-Ownership, history, leadership, footprint, scale, compliance.
+## Part 2: Market, Channel & ABM
+### 3. Industry & Competitors     (market context, competitor matrix, Five Forces, positioning)
+### 4. Customers, Channels & Supply Chain
+### 5. Marketing, Events & ABM Entry Points
 
-## 2. Products And Technology
-Product lines, technical specs, certifications, pricing and reviews.
+## Strategic Synthesis            (3 angles + recommended actions; for ABM/diligence)
 
-## Part 2: Market, Channel And ABM
+## Data Gaps                      (explicit: 缺少数据：...; banner + struck-through fields — see analysis-frameworks.md Data-Gap Governance)
 
-## 3. Industry And Competitors
-Market context, competitor matrix, positioning, strategic risks.
+## Appendix: Full Task Reports    (complete Task 1-5 text, preserved for audit)
 
-## 4. Customers, Channels And Supply Chain
-Customer evidence, distributor/channel map, sourcing/procurement signals.
-
-## 5. Marketing, Events And ABM Entry Points
-Messaging, public campaigns, events, public decision makers, recommended angles.
-
-## Data Gaps
-Missing or low-confidence items.
-
-## Appendix: Full Task Reports
-Preserve the full text of Task 1-5 after the executive synthesis.
-
-## Sources
-Deduplicated source index.
+## Sources                        (deduplicated index with tiers)
 ```
 
-Keep two reading layers: the main body is a synthesized executive report, and the appendix preserves complete task outputs for audit depth.
+Preserve all original numbers, years, names, platforms, source names, product names, and representative quotes. The body is synthesized; the appendix keeps raw task depth.
 
-Keep all original numbers, years, names, platforms, source names, product names, and representative quotes that support the conclusion.
+## Source Ladder
 
-## Quality Gates
+| Tier | Sources | Use |
+|---|---|---|
+| T0 | regulatory, filings, court, customs, patent, certification DB, official registry | high-confidence facts |
+| T1 | official site/PDF, investor pages, product docs, press releases, official social | company claims, product facts |
+| T2 | industry associations, trade shows, distributors, marketplaces, credible media | market & channel evidence |
+| T3 | lead databases, estimates, scraped profiles, review aggregators | estimates only — label as such |
 
-Before final delivery:
+Every material claim → `[Sxx]` resolving to `sources/source_index.md`. Unsourced numbers → `待核实` / `estimate`.
 
-- Confirm the official website and legal/company identity are not confused with similarly named companies.
-- Deduplicate sources and mark source tiers.
-- Check every table row that contains a number has a source mark or `待核实`.
-- Separate confirmed facts from estimates and inferences.
-- Record missing data explicitly as `缺少数据：...`.
-- Remove unsupported outreach claims and private contact guesses.
-- Keep raw task files; do not only deliver a polished summary.
+## Quality Gates (before delivery)
 
-## Public Data And Ethics
+Run this as a mechanical gate, not a soft checklist *(adopted from UZI-Skill's
+critical-check gate)*. Each check is **critical** or **warning**:
 
-This skill supports legitimate business research. It does not support credential misuse, private data extraction, evading access controls, or personal contact harvesting.
+- **critical** — if it fails, the report does **not** ship. Fix it or explicitly mark
+  the affected claim as a data gap, then re-run the gate. A failed critical check is a
+  hard stop, not a note to the reader.
+- **warning** — log it at the top of the report and proceed; the reader is told.
 
-For people research, collect only public business identity information relevant to the company report: name, role, company, official profile URL, public speaking/event references, and official business contact channels.
+> 机械级闸门，不是软清单：critical 不过物理上不出报告（学 UZI 的 critical-check gate）。
+
+| # | Check | Level |
+|---|---|---|
+| 1 | Official identity locked; not confused with same-name companies. | critical |
+| 2 | No fabricated numbers — every numeric table row has a source mark or `待核实`. | critical |
+| 3 | No private credentials, cookies, tokens, or personal contact guesses. | critical |
+| 4 | Empty evidence chains reconciled against `search_log.md` — `搜索失败·未核实` not read as a confirmed negative (`search-strategy.md`). | critical |
+| 5 | Missing data explicit (`缺少数据：...` / `data_gap_acknowledged`), never silently dropped. | critical |
+| 6 | Sources deduplicated by canonical URL; each has a tier. | warning |
+| 7 | Confirmed facts separated from estimates and inferences. | warning |
+| 8 | MECE check on competitor matrix, weaknesses, channels — no overlap, no gap (`analysis-frameworks.md`). | warning |
+| 9 | Every major finding passes So-What (fact → insight → implication). | warning |
+| 10 | Raw task files preserved in appendix. | warning |
+
+If any **critical** check cannot be satisfied even after marking a data gap (e.g. identity
+genuinely cannot be locked), stop and tell the user — do not ship a report that reads as
+authoritative on an unverified foundation.
+
+## Data Boundary & Ethics
+
+Supports legitimate public business research and user-authorized sessions only.
+**Allowed**: public business names, roles, company, official profile URLs, public
+speaking/event references, official contact channels.
+**Not supported**: bypassing login/paywall/captcha/access controls, private system
+data, private email/phone guessing, bulk personal contact harvesting, leaked
+credentials/cookies/tokens.
+
+## Roadmap
+
+A market/industry research mode is planned (the architecture already supports it —
+both modes share `analysis-frameworks.md`). See [`ROADMAP.md`](../ROADMAP.md) at the
+repo root for the full plan.

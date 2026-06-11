@@ -1,6 +1,10 @@
 interface:
   display_name: "Targeted Company Research"
-  short_description: "Source-backed company deep-dive reports"
-  default_prompt: "Use $targeted-company-research to create a source-backed company research report for a named target company."
+  short_description: "Source-backed, consulting-grade company deep-dive reports"
+  default_prompt: "Use $targeted-company-research to create a source-backed, consulting-grade research report for a named target company. Lock scope first, run five evidence chains, then synthesize with analysis frameworks."
 policy:
   allow_implicit_invocation: true
+# Execution notes (read SKILL.md for the full flow):
+#   - Codex maps capabilities to native web_search / web_fetch / browser tool / parallel workers / file write.
+#   - Run five tasks via parallel workers when available (one task per worker), else sequentially.
+#   - See references/platform-capabilities.md for the capability map and sub-agent orchestration.
